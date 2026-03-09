@@ -3,9 +3,6 @@
 # FormsFX
 **Forms for business application made easy. Creating forms in Java has never been this easy!**
 
-[ ![Download](https://api.bintray.com/packages/dlsc-oss/repository/FormsFX/images/download.svg) ](https://bintray.com/dlsc-oss/repository/FormsFX/_latestVersion)
-[![Build Status](https://travis-ci.org/dlemmermann/formsfx.svg?branch=master)](https://travis-ci.org/dlemmermann/formsfx)
-
 ## Maven
 
 To use this framework as part of your Maven build simply add the following dependency to your pom.xml file.
