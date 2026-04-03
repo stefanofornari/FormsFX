@@ -45,7 +45,7 @@
 
     <profiles>
         <profile>
-            <id>release-profile</id>
+            <id>release</id>
             <modules>
                 <module>formsfx</module>
             </modules>
