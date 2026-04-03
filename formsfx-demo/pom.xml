@@ -11,10 +11,13 @@
 
     <name>FormsFX Demo</name>
     <packaging>jar</packaging>
-
+    <artifactId>formsfx-demo</artifactId>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>formsfx-demo</artifactId>
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
 
     <dependencies>
         <dependency>
