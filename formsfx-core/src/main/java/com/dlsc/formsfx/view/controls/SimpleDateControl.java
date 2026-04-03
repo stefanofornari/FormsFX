@@ -34,7 +34,7 @@ import javafx.scene.layout.StackPane;
  *
  * @author Tomasz Krzemiński
  */
-public class SimpleDateControl extends SimpleControl<DateField> {
+public class SimpleDateControl extends SimpleControlOld<DateField> {
 
     protected Label fieldLabel;
     protected DatePicker picker;

@@ -23,7 +23,7 @@ package com.dlsc.formsfx.model.structure;
 import com.dlsc.formsfx.model.event.FieldEvent;
 import com.dlsc.formsfx.model.util.BindingMode;
 import com.dlsc.formsfx.model.util.TranslationService;
-import com.dlsc.formsfx.view.controls.SimpleControl;
+import com.dlsc.formsfx.view.controls.SimpleControlOld;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -145,8 +145,8 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
      */
     protected TranslationService translationService;
 
-    protected SimpleControl<F> renderer;
-    protected Supplier<SimpleControl<F>> rendererSupplier;
+    protected SimpleControlOld<F> renderer;
+    protected Supplier<SimpleControlOld<F>> rendererSupplier;
 
     protected final Map<EventType<FieldEvent>,List<EventHandler<? super FieldEvent>>> eventHandlers = new ConcurrentHashMap<>();
 
@@ -630,7 +630,7 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
      *
      * @return Returns the current field to allow for chaining.
      */
-    public F render(SimpleControl<F> newValue) {
+    public F render(SimpleControlOld<F> newValue) {
         renderer = newValue;
         return (F) this;
     }
@@ -644,7 +644,7 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
      *
      * @return Returns the current field to allow for chaining.
      */
-    public F render(Supplier<SimpleControl<F>> newValue) {
+    public F render(Supplier<SimpleControlOld<F>> newValue) {
         rendererSupplier = newValue;
         return (F) this;
     }
@@ -809,7 +809,7 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
         return translationService != null;
     }
 
-    public SimpleControl<F> getRenderer() {
+    public SimpleControlOld<F> getRenderer() {
         if (renderer == null) {
             renderer = rendererSupplier.get();
         }

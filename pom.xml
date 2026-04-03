@@ -8,7 +8,7 @@
     <groupId>com.dlsc.formsfx</groupId>
     <artifactId>formsfx</artifactId>
     <packaging>pom</packaging>
-    <version>11.6.0</version>
+    <version>11.6.0-ste</version>
 
     <parent>
         <groupId>com.dlsc</groupId>
@@ -63,6 +63,12 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-fxml</artifactId>
                 <version>${javafx.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.controlsfx</groupId>
+                <artifactId>controlsfx</artifactId>
+                <version>11.2.3</version>
             </dependency>
 
             <dependency>

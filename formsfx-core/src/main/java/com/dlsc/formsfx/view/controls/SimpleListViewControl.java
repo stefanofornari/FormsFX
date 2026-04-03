@@ -1,6 +1,6 @@
 package com.dlsc.formsfx.view.controls;
 
-/*-
+/* -
  * ========================LICENSE_START=================================
  * FormsFX
  * %%
@@ -9,9 +9,9 @@ package com.dlsc.formsfx.view.controls;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *        http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,13 +21,11 @@ package com.dlsc.formsfx.view.controls;
  */
 
 import com.dlsc.formsfx.model.structure.MultiSelectionField;
+import com.dlsc.formsfx.view.util.VisibilityProperty;
 import javafx.collections.ListChangeListener;
-import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.layout.GridPane;
 
 /**
  * This class provides the base implementation for a simple control to edit
@@ -35,139 +33,138 @@ import javafx.scene.layout.GridPane;
  *
  * @author Sacha Schmid
  * @author Rinesch Murugathas
+ * @author François Martin
+ * @author Marco Sanfratello
  */
-public class SimpleListViewControl<V> extends SimpleControl<MultiSelectionField<V>> {
+public class SimpleListViewControl<V>
+    extends SimpleControl<MultiSelectionField<V>, ListView<String>> {
 
-    /**
-     * - The fieldLabel is the container that displays the label property of
-     *   the field.
-     * - The listView is the container that displays list values.
-     */
-    protected Label fieldLabel;
-    protected ListView<String> listView = new ListView<>();
+  /**
+   * - The fieldLabel is the container that displays the label property of
+   * the field.
+   * - The node is the container that displays list values.
+   */
+  protected Label fieldLabel;
 
-    /**
-     * The flag used for setting the selection properly.
-     */
-    protected boolean preventUpdate;
+  /**
+   * The flag used for setting the selection properly.
+   */
+  protected boolean preventUpdate;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initializeParts() {
-        super.initializeParts();
+  /**
+   * Constructs a SimpleListViewControl of {@link SimpleListViewControl} type, with visibility condition.
+   *
+   * @param visibilityProperty property for control visibility of this element
+   *
+   * @return the constructed SimpleListViewControl
+   */
+  public static SimpleListViewControl of(VisibilityProperty visibilityProperty) {
+    SimpleListViewControl simpleListViewControl = new SimpleListViewControl();
 
-        getStyleClass().add("simple-listview-control");
+    simpleListViewControl.visibilityProperty = visibilityProperty;
 
-        fieldLabel = new Label(field.labelProperty().getValue());
+    return simpleListViewControl;
+  }
 
-        listView.setItems(field.getItems());
-        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        for (int i = 0; i < field.getItems().size(); i++) {
-            if (field.getSelection().contains(field.getItems().get(i))) {
-                listView.getSelectionModel().select(i);
-            } else {
-                listView.getSelectionModel().clearSelection(i);
-            }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void initializeParts() {
+    super.initializeParts();
+
+    node = new ListView<>();
+    node.getStyleClass().add("simple-listview-control");
+
+    fieldLabel = new Label(field.labelProperty().getValue());
+
+    node.setItems(field.getItems());
+    node.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+    for (int i = 0; i < field.getItems().size(); i++) {
+      if (field.getSelection().contains(field.getItems().get(i))) {
+        node.getSelectionModel().select(i);
+      } else {
+        node.getSelectionModel().clearSelection(i);
+      }
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void layoutParts() {
+    node.setPrefHeight(200);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setupBindings() {
+    super.setupBindings();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setupValueChangedListeners() {
+    super.setupValueChangedListeners();
+
+    field.itemsProperty().addListener(
+        (observable, oldValue, newValue) -> node.setItems(field.getItems())
+    );
+
+    field.selectionProperty().addListener((observable, oldValue, newValue) -> {
+      if (preventUpdate) {
+        return;
+      }
+
+      preventUpdate = true;
+
+      for (int i = 0; i < field.getItems().size(); i++) {
+        if (field.getSelection().contains(field.getItems().get(i))) {
+          node.getSelectionModel().select(i);
+        } else {
+          node.getSelectionModel().clearSelection(i);
         }
-    }
+      }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void layoutParts() {
-        super.layoutParts();
+      preventUpdate = false;
+    });
 
-        int columns = field.getSpan();
+    field.errorMessagesProperty().addListener(
+        (observable, oldValue, newValue) -> toggleTooltip(node)
+    );
+    field.tooltipProperty().addListener((observable, oldValue, newValue) -> toggleTooltip(node));
+    node.focusedProperty().addListener((observable, oldValue, newValue) -> toggleTooltip(node));
+  }
 
-        listView.setPrefHeight(200);
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setupEventHandlers() {
+    node.getSelectionModel().getSelectedIndices().addListener((ListChangeListener<Integer>) c -> {
+      if (preventUpdate) {
+        return;
+      }
 
-        Node labelDescription = field.getLabelDescription();
-        Node valueDescription = field.getValueDescription();
+      preventUpdate = true;
 
-        add(fieldLabel, 0, 0, 2, 1);
-        if (labelDescription != null) {
-            GridPane.setValignment(labelDescription, VPos.TOP);
-            add(labelDescription, 0, 1, 2, 1);
+      for (int i = 0; i < node.getItems().size(); i++) {
+        if (node.getSelectionModel().getSelectedIndices().contains(i)) {
+          field.select(i);
+        } else {
+          field.deselect(i);
         }
-        add(listView, 2, 0, columns - 2, 1);
-        if (valueDescription != null) {
-            GridPane.setValignment(valueDescription, VPos.TOP);
-            add(valueDescription, 2, 1, columns - 2, 1);
-        }
-    }
+      }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setupBindings() {
-        super.setupBindings();
-
-        fieldLabel.textProperty().bind(field.labelProperty());
-        listView.disableProperty().bind(field.editableProperty().not());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setupValueChangedListeners() {
-        super.setupValueChangedListeners();
-
-        field.itemsProperty().addListener((observable, oldValue, newValue) -> listView.setItems(field.getItems()));
-
-        field.selectionProperty().addListener((observable, oldValue, newValue) -> {
-            if (preventUpdate) {
-                return;
-            }
-
-            preventUpdate = true;
-
-            for (int i = 0; i < field.getItems().size(); i++) {
-                if (field.getSelection().contains(field.getItems().get(i))) {
-                    listView.getSelectionModel().select(i);
-                } else {
-                    listView.getSelectionModel().clearSelection(i);
-                }
-            }
-
-            preventUpdate = false;
-        });
-
-        field.errorMessagesProperty().addListener((observable, oldValue, newValue) -> toggleTooltip(listView));
-        field.tooltipProperty().addListener((observable, oldValue, newValue) -> toggleTooltip(listView));
-        listView.focusedProperty().addListener((observable, oldValue, newValue) -> toggleTooltip(listView));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setupEventHandlers() {
-        listView.setOnMouseEntered(event -> toggleTooltip(listView));
-        listView.setOnMouseExited(event -> toggleTooltip(listView));
-
-        listView.getSelectionModel().getSelectedIndices().addListener((ListChangeListener<Integer>) c -> {
-            if (preventUpdate) {
-                return;
-            }
-
-            preventUpdate = true;
-
-            for (int i = 0; i < listView.getItems().size(); i++) {
-                if (listView.getSelectionModel().getSelectedIndices().contains(i)) {
-                    field.select(i);
-                } else {
-                    field.deselect(i);
-                }
-            }
-
-            preventUpdate = false;
-        });
-    }
+      preventUpdate = false;
+    });
+  }
 
 }

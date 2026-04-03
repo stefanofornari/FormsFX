@@ -9,9 +9,9 @@ package com.dlsc.formsfx.view.controls;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *        http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@ package com.dlsc.formsfx.view.controls;
  */
 
 import com.dlsc.formsfx.model.structure.PasswordField;
+import com.dlsc.formsfx.view.util.VisibilityProperty;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.geometry.Pos;
@@ -38,14 +39,7 @@ import javafx.scene.layout.StackPane;
  * @author Sacha Schmid
  * @author Andres Almiray
  */
-public class SimplePasswordControl extends SimpleControl<PasswordField> {
-
-    /**
-     * This StackPane is needed for achieving the readonly effect by putting
-     * the readOnlyLabel over the editableField on the change of the
-     * visibleProperty.
-     */
-    protected StackPane stack;
+public class SimplePasswordControl extends SimpleControl<PasswordField, StackPane> {
 
     /**
      * - The fieldLabel is the container that displays the label property of
@@ -63,6 +57,21 @@ public class SimplePasswordControl extends SimpleControl<PasswordField> {
     protected StringBinding obfuscatedUserInputBinding;
 
     /**
+     * Constructs a SimplePasswordControl of {@link SimplePasswordControl} type, with visibility condition.
+     *
+     * @param visibilityProperty property for control visibility of this element
+     *
+     * @return the constructed SimplePasswordControl
+     */
+    public static SimplePasswordControl of(VisibilityProperty visibilityProperty) {
+        SimplePasswordControl simplePasswordControl = new SimplePasswordControl();
+
+        simplePasswordControl.visibilityProperty = visibilityProperty;
+
+        return simplePasswordControl;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -71,7 +80,7 @@ public class SimplePasswordControl extends SimpleControl<PasswordField> {
 
         getStyleClass().add("simple-password-control");
 
-        stack = new StackPane();
+        this.node = new StackPane();
 
         editableField = new javafx.scene.control.PasswordField();
         editableField.setText(field.getValue());
@@ -86,15 +95,13 @@ public class SimplePasswordControl extends SimpleControl<PasswordField> {
      */
     @Override
     public void layoutParts() {
-        super.layoutParts();
-
         readOnlyLabel.getStyleClass().add("read-only-label");
 
         readOnlyLabel.setPrefHeight(26);
 
-        stack.getChildren().addAll(editableField, readOnlyLabel);
+        this.node.getChildren().addAll(editableField, readOnlyLabel);
 
-        stack.setAlignment(Pos.CENTER_LEFT);
+        this.node.setAlignment(Pos.CENTER_LEFT);
 
         Node labelDescription = field.getLabelDescription();
         Node valueDescription = field.getValueDescription();
@@ -108,7 +115,7 @@ public class SimplePasswordControl extends SimpleControl<PasswordField> {
                 GridPane.setValignment(labelDescription, VPos.TOP);
                 add(labelDescription, 0, rowIndex++, columns, 1);
             }
-            add(stack, 0, rowIndex++, columns, 1);
+            add(this.node, 0, rowIndex++, columns, 1);
             if (valueDescription != null) {
                 GridPane.setValignment(valueDescription, VPos.TOP);
                 add(valueDescription, 0, rowIndex, columns, 1);
@@ -119,7 +126,7 @@ public class SimplePasswordControl extends SimpleControl<PasswordField> {
                 GridPane.setValignment(labelDescription, VPos.TOP);
                 add(labelDescription, 0, 1, 2, 1);
             }
-            add(stack, 2, 0, columns - 2, 1);
+            add(this.node, 2, 0, columns - 2, 1);
             if (valueDescription != null) {
                 GridPane.setValignment(valueDescription, VPos.TOP);
                 add(valueDescription, 2, 1, columns - 2, 1);

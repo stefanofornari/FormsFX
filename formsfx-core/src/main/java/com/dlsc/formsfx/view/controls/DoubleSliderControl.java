@@ -1,0 +1,173 @@
+package com.dlsc.formsfx.view.controls;
+
+/*-
+ * ========================LICENSE_START=================================
+ * FormsFX
+ * %%
+ * Copyright (C) 2019 - 2026 DLSC Software & Consulting GmbH
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * =========================LICENSE_END==================================
+ */
+
+import com.dlsc.formsfx.model.structure.DoubleField;
+import com.dlsc.formsfx.view.util.VisibilityProperty;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+
+/**
+ * Provides an implementation of a slider control for an {@link DoubleField}.
+ *
+ * @author François Martin
+ * @author Marco Sanfratello
+ */
+public class DoubleSliderControl extends SimpleControl<DoubleField, HBox> {
+  public static final int VALUE_LABEL_PADDING = 25;
+  /**
+   * - fieldLabel is the container that displays the label property of the
+   * field.
+   * - slider is the control to change the value.
+   * - node holds the control so that it can be styled properly.
+   */
+  protected Slider slider;
+  protected Label valueLabel;
+  private double min;
+  private double max;
+  private int precision;
+
+  /**
+   * Constructs a DoubleSliderControl of {@link DoubleSliderControl} type, with visibility condition.
+   *
+   * @param min       minimum slider value
+   * @param max       maximum slider value
+   * @param precision number of digits after the decimal point
+   * @param visibilityProperty property for control visibility of this element
+   *
+   * @return the constructed DoubleSliderControl
+   */
+  public static DoubleSliderControl of(double min, double max, int precision, VisibilityProperty visibilityProperty) {
+    DoubleSliderControl doubleSliderControl = new DoubleSliderControl(min, max, precision);
+
+    doubleSliderControl.visibilityProperty = visibilityProperty;
+
+    return doubleSliderControl;
+  }
+
+  /**
+   * Creates a slider for double values with a minimum and maximum value, with a set precision.
+   *
+   * @param min       minimum slider value
+   * @param max       maximum slider value
+   * @param precision number of digits after the decimal point
+   */
+  public DoubleSliderControl(double min, double max, int precision) {
+    super();
+    this.min = min;
+    this.max = max;
+    this.precision = precision;
+  }
+
+  /**
+   * Rounds a value to a given precision, using {@link RoundingMode#HALF_UP}.
+   *
+   * @param value     value to be rounded
+   * @param precision number of digits after the decimal point
+   * @return
+   */
+  private double round(double value, int precision) {
+    return BigDecimal.valueOf(value)
+        .setScale(precision, RoundingMode.HALF_UP)
+        .doubleValue();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void initializeParts() {
+    super.initializeParts();
+
+    fieldLabel = new Label(field.labelProperty().getValue());
+
+    valueLabel = new Label(String.valueOf(field.getValue().doubleValue()));
+
+    slider = new Slider();
+    slider.setMin(min);
+    slider.setMax(max);
+    slider.setShowTickLabels(false);
+    slider.setShowTickMarks(false);
+    slider.setValue(field.getValue());
+
+    node = new HBox();
+    node.getStyleClass().add("double-slider-control");
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void layoutParts() {
+    node.getChildren().addAll(slider, valueLabel);
+    HBox.setHgrow(slider, Priority.ALWAYS);
+    valueLabel.setAlignment(Pos.CENTER);
+    valueLabel.setMinWidth(VALUE_LABEL_PADDING);
+    node.setSpacing(VALUE_LABEL_PADDING);
+    HBox.setMargin(valueLabel, new Insets(0, VALUE_LABEL_PADDING, 0, 0));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setupBindings() {
+    super.setupBindings();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setupValueChangedListeners() {
+    super.setupValueChangedListeners();
+    field.userInputProperty().addListener((observable, oldValue, newValue) -> {
+      double sliderValue = round(Double.parseDouble(field.getUserInput()), precision);
+      slider.setValue(sliderValue);
+      valueLabel.setText(String.valueOf(sliderValue));
+    });
+
+    field.errorMessagesProperty().addListener(
+        (observable, oldValue, newValue) -> toggleTooltip(slider));
+    field.tooltipProperty().addListener(
+        (observable, oldValue, newValue) -> toggleTooltip(slider));
+
+    slider.focusedProperty().addListener(
+        (observable, oldValue, newValue) -> toggleTooltip(slider));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setupEventHandlers() {
+    slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      field.userInputProperty().setValue(String.valueOf(round(newValue.doubleValue(), precision)));
+    });
+  }
+}
