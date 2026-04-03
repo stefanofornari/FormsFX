@@ -40,8 +40,24 @@
 
     <modules>
         <module>formsfx</module>
-        <module>formsfx-demo</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>formsfx-demo</module>
+            </modules>
+        </profile>
+
+        <!-- Your release profile -->
+        <profile>
+            <id>release</id>
+        </profile>
+    </profiles>
 
     <properties>
         <project.identifier>formsfx</project.identifier>
@@ -63,6 +79,14 @@
                     <release>11</release>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
