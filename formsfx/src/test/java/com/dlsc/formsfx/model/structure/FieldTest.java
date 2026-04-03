@@ -38,16 +38,16 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
+import javafx.util.StringConverter;
 
 /**
  * @author Sacha Schmid
  * @author Rinesch Murugathas
  */
-@Ignore
+//@Ignore
 public class FieldTest {
 
     @BeforeClass
@@ -141,22 +141,22 @@ public class FieldTest {
         BooleanField bf = Field.ofBooleanType(b);
 
         sf.userInputProperty().setValue("test 2");
-        Assert.assertEquals("test", s.getValue());
+        Assert.assertEquals("test", sf.persistentValue.getValue());
         sf.persist();
         Assert.assertEquals("test 2", s.getValue());
 
         df.userInputProperty().setValue("2");
-        Assert.assertEquals(1.0, d.get(), 0.0001);
+        Assert.assertEquals(1.0, df.persistentValue.get(), 0.0001);
         df.persist();
         Assert.assertEquals(2.0, d.get(), 0.0001);
 
         inf.userInputProperty().setValue("5");
-        Assert.assertEquals(3, i.get());
+        Assert.assertEquals(3, inf.persistentValue.get());
         inf.persist();
         Assert.assertEquals(5, i.get());
 
         bf.userInputProperty().setValue("true");
-        Assert.assertEquals(false, b.get());
+        Assert.assertEquals(false, bf.persistentValue.get());
         bf.persist();
         Assert.assertEquals(true, b.get());
 
@@ -165,7 +165,7 @@ public class FieldTest {
         Assert.assertEquals("test 3", sf.getValue());
     }
 
-    @Ignore
+    @Test
     public void selectionBindingTest() {
         ObjectProperty<String> o1 = new SimpleObjectProperty<>("hello");
         ListProperty<String> l1 = new SimpleListProperty<>(FXCollections.observableArrayList("hello", "world"));
@@ -185,21 +185,31 @@ public class FieldTest {
         mf.select(1);
 
         Assert.assertEquals(2, mf.getSelection().size());
-        Assert.assertEquals(1, l3.size());
+        Assert.assertEquals(1, mf.persistentSelection.size());
 
         mf.persist();
 
         Assert.assertEquals(2, l3.size());
     }
 
-    @Ignore
+    @Test
     public void propertiesTest() {
         StringProperty sp = new SimpleStringProperty("test 3");
 
         StringField s = Field.ofStringType("test")
                 .multiline(true)
                 .editable(true)
-                .format(String::toString)
+                .format(new StringConverter() {
+                    @Override
+                    public String toString(final Object o) {
+                        return String.valueOf(o);
+                    }
+
+                    @Override
+                    public Object fromString(final String s) {
+                        return s;
+                    }
+                })
                 .styleClass("class", "thing")
                 .id("element")
                 .placeholder("temp")

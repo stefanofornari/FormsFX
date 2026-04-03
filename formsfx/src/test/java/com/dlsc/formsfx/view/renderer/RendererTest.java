@@ -9,9 +9,9 @@ package com.dlsc.formsfx.view.renderer;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *        http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,7 +71,7 @@ public class RendererTest {
                 Field.ofStringType("").span(7),
                 Field.ofBooleanType(false).span(8),
                 Field.ofMultiSelectionType(Arrays.asList(1, 2, 3), Collections.singletonList(1)),
-                Field.ofSingleSelectionType(Arrays.asList(1, 2, 3), 1).render(new SimpleRadioButtonControl<>())
+                Field.ofSingleSelectionType(Arrays.asList(1, 2, 3), 1).render(new SimpleRadioButtonControl())
         );
         GroupRenderer r = new GroupRenderer(g);
 
@@ -84,7 +84,7 @@ public class RendererTest {
         Section s = Section.of(
                 Field.ofDoubleType(2.0),
                 Field.ofIntegerType(1),
-                Field.ofMultiSelectionType(Arrays.asList(1, 2, 3), Collections.singletonList(1)).render(new SimpleCheckBoxControl<>()),
+                Field.ofMultiSelectionType(Arrays.asList(1, 2, 3), Collections.singletonList(1)).render(new SimpleCheckBoxControl()),
                 Field.ofSingleSelectionType(Arrays.asList(1, 2, 3), 1)
         );
         SectionRenderer r = new SectionRenderer(s);

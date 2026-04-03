@@ -9,9 +9,9 @@ package com.dlsc.formsfx.model.structure;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *        http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,16 +23,12 @@ package com.dlsc.formsfx.model.structure;
 import com.dlsc.formsfx.model.event.FieldEvent;
 import com.dlsc.formsfx.model.util.BindingMode;
 import com.dlsc.formsfx.model.util.TranslationService;
-import com.dlsc.formsfx.view.controls.SimpleControlOld;
+import com.dlsc.formsfx.view.controls.SimpleControl;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
@@ -112,7 +108,6 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
      * Fields can be styled using CSS through ID or class hooks.
      */
     protected final StringProperty id = new SimpleStringProperty(UUID.randomUUID().toString());
-    protected final ListProperty<String> styleClass = new SimpleListProperty<>(FXCollections.observableArrayList());
     protected final IntegerProperty span = new SimpleIntegerProperty(12);
 
     /**
@@ -145,8 +140,8 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
      */
     protected TranslationService translationService;
 
-    protected SimpleControlOld<F> renderer;
-    protected Supplier<SimpleControlOld<F>> rendererSupplier;
+    protected SimpleControl<F, ? extends Node> renderer;
+    protected Supplier<SimpleControl<F, ? extends Node>> rendererSupplier;
 
     protected final Map<EventType<FieldEvent>,List<EventHandler<? super FieldEvent>>> eventHandlers = new ConcurrentHashMap<>();
 
@@ -630,7 +625,7 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
      *
      * @return Returns the current field to allow for chaining.
      */
-    public F render(SimpleControlOld<F> newValue) {
+    public F render(SimpleControl<F, Node> newValue) {
         renderer = newValue;
         return (F) this;
     }
@@ -644,7 +639,7 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
      *
      * @return Returns the current field to allow for chaining.
      */
-    public F render(Supplier<SimpleControlOld<F>> newValue) {
+    public F render(Supplier<SimpleControl<F, ? extends Node>> newValue) {
         rendererSupplier = newValue;
         return (F) this;
     }
@@ -809,7 +804,7 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
         return translationService != null;
     }
 
-    public SimpleControlOld<F> getRenderer() {
+    public SimpleControl<F, ? extends Node> getRenderer() {
         if (renderer == null) {
             renderer = rendererSupplier.get();
         }
@@ -886,7 +881,7 @@ public abstract class Field<F extends Field<F>> extends Element<F> implements Fo
             }
         }
     }
-  
+
     public Node getLabelDescription() {
         return labelDescription;
     }

@@ -34,20 +34,17 @@ import javafx.scene.layout.StackPane;
  *
  * @author Tomasz Krzemiński
  */
-public class SimpleDateControl extends SimpleControlOld<DateField> {
+public class SimpleDateControl extends SimpleControl<DateField, StackPane> {
 
-    protected Label fieldLabel;
     protected DatePicker picker;
     protected Label readOnlyLabel;
-    protected StackPane stack;
 
     @Override
     public void initializeParts() {
         super.initializeParts();
 
-        stack = new StackPane();
+        node = new StackPane();
 
-        fieldLabel = new Label();
         readOnlyLabel = new Label();
         picker = new DatePicker();
         picker.setEditable(true);
@@ -62,8 +59,8 @@ public class SimpleDateControl extends SimpleControlOld<DateField> {
 
         picker.setMaxWidth(Double.MAX_VALUE);
 
-        stack.setAlignment(Pos.CENTER_LEFT);
-        stack.getChildren().addAll(picker, readOnlyLabel);
+        node.setAlignment(Pos.CENTER_LEFT);
+        node.getChildren().addAll(picker, readOnlyLabel);
 
         Node labelDescription = field.getLabelDescription();
         Node valueDescription = field.getValueDescription();
@@ -73,7 +70,7 @@ public class SimpleDateControl extends SimpleControlOld<DateField> {
             GridPane.setValignment(labelDescription, VPos.TOP);
             add(labelDescription, 0, 1, 2, 1);
         }
-        add(stack, 2, 0, columns - 2, 1);
+        add(node, 2, 0, columns - 2, 1);
         if (valueDescription != null) {
             GridPane.setValignment(valueDescription, VPos.TOP);
             add(valueDescription, 2, 1, columns - 2, 1);

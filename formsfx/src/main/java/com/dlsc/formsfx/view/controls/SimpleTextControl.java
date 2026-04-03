@@ -49,7 +49,6 @@ public class SimpleTextControl extends SimpleControl<StringField, StackPane> {
   protected TextField editableField;
   protected TextArea editableArea;
   protected Label readOnlyLabel;
-  protected Label fieldLabel;
 
   /**
    * Constructs a SimpleTextControl of {@link SimpleTextControl} type, with visibility condition.
@@ -82,8 +81,6 @@ public class SimpleTextControl extends SimpleControl<StringField, StackPane> {
     readOnlyLabel = new Label(field.getValue());
     fieldLabel = new Label(field.labelProperty().getValue());
     editableField.setPromptText(field.placeholderProperty().getValue());
-
-    System.out.println("Toolip: " + tooltip + " <" + tooltip.getText() + ">" + field.getTooltip());
 
     readOnlyLabel.setTooltip(tooltip);
     editableField.setTooltip(tooltip);
