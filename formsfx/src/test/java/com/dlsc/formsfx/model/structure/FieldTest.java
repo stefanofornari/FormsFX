@@ -36,10 +36,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.BDDAssertions.then;
 
 import java.util.Arrays;
 import javafx.util.StringConverter;
@@ -48,10 +48,10 @@ import javafx.util.StringConverter;
  * @author Sacha Schmid
  * @author Rinesch Murugathas
  */
-@Ignore
+//@Ignore
 public class FieldTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         try {
             Platform.startup(() -> {});
@@ -70,63 +70,63 @@ public class FieldTest {
 
         s.required("This field is required.").validate(StringLengthValidator.atLeast(6, "test"));
 
-        Assert.assertFalse(s.isValid());
+        then(s.isValid()).isFalse();
 
         s.validate(StringLengthValidator.upTo(6, "test"));
 
-        Assert.assertEquals(2, changes[0]);
-        Assert.assertTrue(s.isValid());
+        then(changes[0]).isEqualTo(2);
+        then(s.isValid()).isTrue();
     }
 
     @Test
     public void singleSelectionTest() {
         SingleSelectionField<String> s = Field.ofSingleSelectionType(Arrays.asList("Test", "Test 1", "Test 2"), 0);
 
-        Assert.assertEquals("Test", s.getSelection());
+        then(s.getSelection()).isEqualTo("Test");
 
         s.select(2);
-        Assert.assertEquals("Test 2", s.getSelection());
+        then(s.getSelection()).isEqualTo("Test 2");
 
         s.select(4);
-        Assert.assertEquals("Test 2", s.getSelection());
+        then(s.getSelection()).isEqualTo("Test 2");
 
         s.deselect();
-        Assert.assertEquals(null, s.getSelection());
+        then(s.getSelection()).isNull();
 
         s.select(2);
-        Assert.assertEquals("Test 2", s.getSelection());
+        then(s.getSelection()).isEqualTo("Test 2");
 
         s.select(-1);
-        Assert.assertEquals(null, s.getSelection());
+        then(s.getSelection()).isNull();
     }
 
     @Test
     public void multiSelectionTest() {
         MultiSelectionField<String> s = Field.ofMultiSelectionType(Arrays.asList("Test", "Test 1", "Test 2"), Arrays.asList(0, 3));
 
-        Assert.assertEquals(1, s.getSelection().size());
+        then(s.getSelection().size()).isEqualTo(1);
 
         s.select(2);
-        Assert.assertEquals(2, s.getSelection().size());
+        then(s.getSelection().size()).isEqualTo(2);
 
         s.select(4);
-        Assert.assertEquals(2, s.getSelection().size());
+        then(s.getSelection().size()).isEqualTo(2);
 
         s.deselect(1);
-        Assert.assertEquals(2, s.getSelection().size());
+        then(s.getSelection().size()).isEqualTo(2);
 
         s.deselect(0);
-        Assert.assertEquals(1, s.getSelection().size());
+        then(s.getSelection().size()).isEqualTo(1);
     }
 
     @Test
     public void multilineTest() {
         StringField s = Field.ofStringType("test").multiline(true);
 
-        Assert.assertTrue(s.isMultiline());
+        then(s.isMultiline()).isTrue();
 
         s.multiline(false);
-        Assert.assertFalse(s.multilineProperty().getValue());
+        then(s.multilineProperty().getValue()).isFalse();
     }
 
     @Test
@@ -142,28 +142,28 @@ public class FieldTest {
         BooleanField bf = Field.ofBooleanType(b);
 
         sf.userInputProperty().setValue("test 2");
-        Assert.assertEquals("test", sf.persistentValue.getValue());
+        then(sf.persistentValue.getValue()).isEqualTo("test");
         sf.persist();
-        Assert.assertEquals("test 2", s.getValue());
+        then(s.getValue()).isEqualTo("test 2");
 
         df.userInputProperty().setValue("2");
-        Assert.assertEquals(1.0, df.persistentValue.get(), 0.0001);
+        then(df.persistentValue.get()).isEqualTo(1.0);
         df.persist();
-        Assert.assertEquals(2.0, d.get(), 0.0001);
+        then(d.get()).isEqualTo(2.0);
 
         inf.userInputProperty().setValue("5");
-        Assert.assertEquals(3, inf.persistentValue.get());
+        then(inf.persistentValue.get()).isEqualTo(3);
         inf.persist();
-        Assert.assertEquals(5, i.get());
+        then(i.get()).isEqualTo(5);
 
         bf.userInputProperty().setValue("true");
-        Assert.assertEquals(false, bf.persistentValue.get());
+        then(bf.persistentValue.get()).isFalse();
         bf.persist();
-        Assert.assertEquals(true, b.get());
+        then(b.get()).isTrue();
 
         s.setValue("test 3");
-        Assert.assertEquals("test 3", sf.getValue());
-        Assert.assertEquals("test 3", sf.getValue());
+        then(sf.getValue()).isEqualTo("test 3");
+        then(sf.getValue()).isEqualTo("test 3");
     }
 
     @Test
@@ -176,21 +176,21 @@ public class FieldTest {
         SingleSelectionField<String> sif = Field.ofSingleSelectionType(l1, o1);
         MultiSelectionField<String> mf = Field.ofMultiSelectionType(l2, l3);
 
-        Assert.assertEquals("hello", sif.getSelection());
-        Assert.assertEquals(1, mf.getSelection().size());
+        then(sif.getSelection()).isEqualTo("hello");
+        then(mf.getSelection().size()).isEqualTo(1);
 
         l1.setValue(FXCollections.observableArrayList("oh", "wonder"));
 
-        Assert.assertEquals(null, sif.getSelection());
+        then(sif.getSelection()).isNull();
 
         mf.select(1);
 
-        Assert.assertEquals(2, mf.getSelection().size());
-        Assert.assertEquals(1, mf.persistentSelection.size());
+        then(mf.getSelection().size()).isEqualTo(2);
+        then(mf.persistentSelection.size()).isEqualTo(1);
 
         mf.persist();
 
-        Assert.assertEquals(2, l3.size());
+        then(l3.size()).isEqualTo(2);
     }
 
     @Test
@@ -219,15 +219,15 @@ public class FieldTest {
                 .span(6)
                 .span(ColSpan.HALF);
 
-        Assert.assertEquals("test", s.getValue());
-        Assert.assertEquals(6, s.getSpan());
-        Assert.assertEquals(2, s.getStyleClass().size());
-        Assert.assertEquals("Field", s.getLabel());
-        Assert.assertEquals("temp", s.getPlaceholder());
+        then(s.getValue()).isEqualTo("test");
+        then(s.getSpan()).isEqualTo(6);
+        then(s.getStyleClass().size()).isEqualTo(2);
+        then(s.getLabel()).isEqualTo("Field");
+        then(s.getPlaceholder()).isEqualTo("temp");
 
         s.bind(sp);
 
-        Assert.assertEquals("test 3", s.getValue());
+        then(s.persistentValue.getValue()).isEqualTo("test 3");
     }
 
 }

@@ -30,10 +30,10 @@ import com.dlsc.formsfx.view.controls.SimpleTextControl;
 import javafx.application.Platform;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,10 +42,10 @@ import java.util.Collections;
  * @author Sacha Schmid
  * @author Rinesch Murugathas
  */
-@Ignore
+@Disabled
 public class RendererTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws IllegalStateException {
         try {
             Platform.startup(() -> {});
@@ -59,10 +59,10 @@ public class RendererTest {
         Form f = Form.of(Group.of(), Section.of(), Group.of(), Group.of(), Section.of());
         FormRenderer r = new FormRenderer(f);
 
-        Assert.assertTrue(r.getChildren().get(0) instanceof GroupRenderer);
-        Assert.assertEquals(5, r.getChildren().size());
-        Assert.assertFalse(r.getChildren().get(0) instanceof SectionRenderer);
-        Assert.assertTrue(r.getChildren().get(1) instanceof SectionRenderer);
+        Assertions.assertTrue(r.getChildren().get(0) instanceof GroupRenderer);
+        Assertions.assertEquals(5, r.getChildren().size());
+        Assertions.assertFalse(r.getChildren().get(0) instanceof SectionRenderer);
+        Assertions.assertTrue(r.getChildren().get(1) instanceof SectionRenderer);
     }
 
     @Test
@@ -75,8 +75,8 @@ public class RendererTest {
         );
         GroupRenderer r = new GroupRenderer(g);
 
-        Assert.assertTrue(r.getChildren().get(0) instanceof GridPane);
-        Assert.assertTrue(((GridPane) r.getChildren().get(0)).getChildren().get(0) instanceof SimpleTextControl);
+        Assertions.assertTrue(r.getChildren().get(0) instanceof GridPane);
+        Assertions.assertTrue(((GridPane) r.getChildren().get(0)).getChildren().get(0) instanceof SimpleTextControl);
     }
 
     @Test
@@ -89,13 +89,13 @@ public class RendererTest {
         );
         SectionRenderer r = new SectionRenderer(s);
 
-        Assert.assertTrue(r.getChildren().get(0) instanceof TitledPane);
-        Assert.assertTrue(((TitledPane) r.getChildren().get(0)).getContent() instanceof GridPane);
-        Assert.assertTrue(((TitledPane) r.getChildren().get(0)).isExpanded());
+        Assertions.assertTrue(r.getChildren().get(0) instanceof TitledPane);
+        Assertions.assertTrue(((TitledPane) r.getChildren().get(0)).getContent() instanceof GridPane);
+        Assertions.assertTrue(((TitledPane) r.getChildren().get(0)).isExpanded());
 
         s.collapse(true);
 
-        Assert.assertFalse(((TitledPane) r.getChildren().get(0)).isExpanded());
+        Assertions.assertFalse(((TitledPane) r.getChildren().get(0)).isExpanded());
     }
 
 }

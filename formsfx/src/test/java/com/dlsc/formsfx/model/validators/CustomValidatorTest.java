@@ -20,8 +20,9 @@ package com.dlsc.formsfx.model.validators;
  * =========================LICENSE_END==================================
  */
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Sacha Schmid
@@ -33,9 +34,9 @@ public class CustomValidatorTest {
     public void customTest() {
         CustomValidator<String> c = CustomValidator.forPredicate(s -> s.length() % 2 == 0, "test");
 
-        Assert.assertTrue(c.validate("abcd").getResult());
-        Assert.assertFalse(c.validate("abc").getResult());
-        Assert.assertTrue(c.validate("").getResult());
+        then(c.validate("abcd").getResult()).isTrue();
+        then(c.validate("abc").getResult()).isFalse();
+        then(c.validate("").getResult()).isTrue();
     }
 
 }

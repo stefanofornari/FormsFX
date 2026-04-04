@@ -21,10 +21,10 @@ package com.dlsc.formsfx.model.validators;
  */
 
 import javafx.collections.FXCollections;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.TestCase.fail;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 /**
  * @author Sacha Schmid
@@ -36,66 +36,52 @@ public class SelectionLengthValidatorTest {
     public void betweenTest() {
         SelectionLengthValidator<Integer> s = SelectionLengthValidator.between(1, 3, "test");
 
-        Assert.assertTrue(s.validate(FXCollections.observableArrayList(1, 2, 3)).getResult());
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList()).getResult());
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList(1, 2, 3, 4, 5)).getResult());
+        then(s.validate(FXCollections.observableArrayList(1, 2, 3)).getResult()).isTrue();
+        then(s.validate(FXCollections.observableArrayList()).getResult()).isFalse();
+        then(s.validate(FXCollections.observableArrayList(1, 2, 3, 4, 5)).getResult()).isFalse();
 
-        try {
-            SelectionLengthValidator s2 = SelectionLengthValidator.between(-10, 2, "test");
-            fail();
-        } catch (IllegalArgumentException ignored) {}
+        thenThrownBy(() -> SelectionLengthValidator.between(-10, 2, "test"))
+            .isInstanceOf(IllegalArgumentException.class);
 
-        try {
-            SelectionLengthValidator s3 = SelectionLengthValidator.between(0, 0, "test");
-        } catch (IllegalArgumentException e) {
-            fail();
-        }
+        SelectionLengthValidator s3 = SelectionLengthValidator.between(0, 0, "test");
 
-        try {
-            SelectionLengthValidator s4 = SelectionLengthValidator.between(10, 1, "test");
-            fail();
-        } catch (IllegalArgumentException ignored) {}
+        thenThrownBy(() -> SelectionLengthValidator.between(10, 1, "test"))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void atLeastTest() {
         SelectionLengthValidator<Integer> s = SelectionLengthValidator.atLeast(2, "test");
 
-        Assert.assertTrue(s.validate(FXCollections.observableArrayList(1, 4)).getResult());
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList(1)).getResult());
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList()).getResult());
-        Assert.assertTrue(s.validate(FXCollections.observableArrayList(1, 2, 3)).getResult());
+        then(s.validate(FXCollections.observableArrayList(1, 4)).getResult()).isTrue();
+        then(s.validate(FXCollections.observableArrayList(1)).getResult()).isFalse();
+        then(s.validate(FXCollections.observableArrayList()).getResult()).isFalse();
+        then(s.validate(FXCollections.observableArrayList(1, 2, 3)).getResult()).isTrue();
 
-        try {
-            SelectionLengthValidator s2 = SelectionLengthValidator.atLeast(-10, "test");
-            fail();
-        } catch (IllegalArgumentException ignored) {}
+        thenThrownBy(() -> SelectionLengthValidator.atLeast(-10, "test"))
+            .isInstanceOf(IllegalArgumentException.class);
 
-        try {
-            SelectionLengthValidator s3 = SelectionLengthValidator.atLeast(0, "test");
-        } catch (IllegalArgumentException e) {
-            fail();
-        }
+        SelectionLengthValidator s3 = SelectionLengthValidator.atLeast(0, "test");
     }
 
     @Test
     public void upToTest() {
         SelectionLengthValidator<Integer> s = SelectionLengthValidator.upTo(2, "test");
 
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList(3, 5, 1)).getResult());
-        Assert.assertTrue(s.validate(FXCollections.observableArrayList(1, 2)).getResult());
-        Assert.assertTrue(s.validate(FXCollections.observableArrayList()).getResult());
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList(1, 2, 3, 5, 14)).getResult());
+        then(s.validate(FXCollections.observableArrayList(3, 5, 1)).getResult()).isFalse();
+        then(s.validate(FXCollections.observableArrayList(1, 2)).getResult()).isTrue();
+        then(s.validate(FXCollections.observableArrayList()).getResult()).isTrue();
+        then(s.validate(FXCollections.observableArrayList(1, 2, 3, 5, 14)).getResult()).isFalse();
     }
 
     @Test
     public void exactlyTest() {
         SelectionLengthValidator<Integer> s = SelectionLengthValidator.exactly(2, "test");
 
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList(1, 2, 3)).getResult());
-        Assert.assertTrue(s.validate(FXCollections.observableArrayList(1, 2)).getResult());
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList()).getResult());
-        Assert.assertFalse(s.validate(FXCollections.observableArrayList(1)).getResult());
+        then(s.validate(FXCollections.observableArrayList(1, 2, 3)).getResult()).isFalse();
+        then(s.validate(FXCollections.observableArrayList(1, 2)).getResult()).isTrue();
+        then(s.validate(FXCollections.observableArrayList()).getResult()).isFalse();
+        then(s.validate(FXCollections.observableArrayList(1)).getResult()).isFalse();
     }
 
 }

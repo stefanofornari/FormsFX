@@ -23,13 +23,13 @@ package com.dlsc.formsfx.model.structure;
 import com.dlsc.formsfx.model.util.ResourceBundleService;
 import com.dlsc.formsfx.model.validators.RegexValidator;
 import com.dlsc.formsfx.model.validators.StringLengthValidator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Sacha Schmid
@@ -41,7 +41,7 @@ public class FormTest {
     private ResourceBundle rbDE = ResourceBundle.getBundle("testbundle", new Locale("de", "CH"));
     private ResourceBundle rbEN = ResourceBundle.getBundle("testbundle", new Locale("en", "UK"));
 
-    @Before
+    @BeforeEach
     public void beforeSuite() {
         service = new ResourceBundleService(rbEN);
     }
@@ -65,8 +65,8 @@ public class FormTest {
                 )
         );
 
-        Assert.assertEquals(6, f.getElements().size());
-        Assert.assertEquals(4, f.getGroups().size());
+        then(f.getElements().size()).isEqualTo(6);
+        then(f.getGroups().size()).isEqualTo(4);
     }
 
     @Test
@@ -79,12 +79,12 @@ public class FormTest {
         ).title("form_title")
                 .i18n(service);
 
-        Assert.assertEquals("Test Form", f.getTitle());
+        then(f.getTitle()).isEqualTo("Test Form");
 
         service.changeLocale(rbDE);
 
-        Assert.assertEquals("Testformular", f.getTitle());
-        Assert.assertEquals("Erste Gruppe", ((Section) f.getGroups().get(0)).getTitle());
+        then(f.getTitle()).isEqualTo("Testformular");
+        then(((Section) f.getGroups().get(0)).getTitle()).isEqualTo("Erste Gruppe");
     }
 
     @Test
@@ -98,21 +98,21 @@ public class FormTest {
         s.userInputProperty().setValue("testttt");
         d.userInputProperty().setValue("3.0");
 
-        Assert.assertEquals(true, s.hasChanged());
-        Assert.assertEquals(true, sec.hasChanged());
-        Assert.assertEquals(true, f.hasChanged());
+        then(s.hasChanged()).isTrue();
+        then(sec.hasChanged()).isTrue();
+        then(f.hasChanged()).isTrue();
 
         s.reset();
 
-        Assert.assertEquals(false, s.hasChanged());
-        Assert.assertEquals(true, sec.hasChanged());
-        Assert.assertEquals(true, f.hasChanged());
+        then(s.hasChanged()).isFalse();
+        then(sec.hasChanged()).isTrue();
+        then(f.hasChanged()).isTrue();
 
         d.persist();
 
-        Assert.assertEquals(false, s.hasChanged());
-        Assert.assertEquals(false, sec.hasChanged());
-        Assert.assertEquals(false, f.hasChanged());
+        then(s.hasChanged()).isFalse();
+        then(sec.hasChanged()).isFalse();
+        then(f.hasChanged()).isFalse();
     }
 
     @Test
@@ -126,31 +126,31 @@ public class FormTest {
 
         Form f = Form.of(sec);
 
-        Assert.assertEquals(false, s.isValid());
-        Assert.assertEquals(false, sec.isValid());
-        Assert.assertEquals(false, f.isValid());
-        Assert.assertEquals(1, s.getErrorMessages().size());
+        then(s.isValid()).isFalse();
+        then(sec.isValid()).isFalse();
+        then(f.isValid()).isFalse();
+        then(s.getErrorMessages().size()).isEqualTo(1);
 
         s.userInputProperty().setValue("Test");
 
-        Assert.assertEquals(false, s.isValid());
-        Assert.assertEquals(false, sec.isValid());
-        Assert.assertEquals(false, f.isValid());
-        Assert.assertEquals(2, s.getErrorMessages().size());
+        then(s.isValid()).isFalse();
+        then(sec.isValid()).isFalse();
+        then(f.isValid()).isFalse();
+        then(s.getErrorMessages().size()).isEqualTo(2);
 
         s.userInputProperty().setValue("Testing this");
 
-        Assert.assertEquals(false, s.isValid());
-        Assert.assertEquals(false, sec.isValid());
-        Assert.assertEquals(false, f.isValid());
-        Assert.assertEquals(1, s.getErrorMessages().size());
+        then(s.isValid()).isFalse();
+        then(sec.isValid()).isFalse();
+        then(f.isValid()).isFalse();
+        then(s.getErrorMessages().size()).isEqualTo(1);
 
         s.userInputProperty().setValue("testing this properly");
 
-        Assert.assertEquals(true, s.isValid());
-        Assert.assertEquals(true, sec.isValid());
-        Assert.assertEquals(true, f.isValid());
-        Assert.assertTrue(s.getErrorMessages().isEmpty());
+        then(s.isValid()).isTrue();
+        then(sec.isValid()).isTrue();
+        then(f.isValid()).isTrue();
+        then(s.getErrorMessages()).isEmpty();
     }
 
     @Test
@@ -163,44 +163,44 @@ public class FormTest {
 
         s.userInputProperty().setValue("testttt");
 
-        Assert.assertEquals(true, s.hasChanged());
-        Assert.assertEquals(true, f.hasChanged());
-        Assert.assertEquals(true, f.isPersistable());
+        then(s.hasChanged()).isTrue();
+        then(f.hasChanged()).isTrue();
+        then(f.isPersistable()).isTrue();
 
         s.reset();
 
-        Assert.assertEquals(false, s.hasChanged());
-        Assert.assertEquals(false, f.hasChanged());
-        Assert.assertEquals(false, f.isPersistable());
+        then(s.hasChanged()).isFalse();
+        then(f.hasChanged()).isFalse();
+        then(f.isPersistable()).isFalse();
 
         i.userInputProperty().setValue("testttt");
 
-        Assert.assertEquals(true, i.hasChanged());
-        Assert.assertEquals(true, f.hasChanged());
-        Assert.assertEquals(false, f.isPersistable());
+        then(i.hasChanged()).isTrue();
+        then(f.hasChanged()).isTrue();
+        then(f.isPersistable()).isFalse();
 
         f.persist();
 
-        Assert.assertEquals(true, i.hasChanged());
-        Assert.assertEquals(true, f.hasChanged());
-        Assert.assertEquals(false, f.isPersistable());
+        then(i.hasChanged()).isTrue();
+        then(f.hasChanged()).isTrue();
+        then(f.isPersistable()).isFalse();
 
         i.userInputProperty().setValue("50");
 
-        Assert.assertEquals(true, f.isPersistable());
+        then(f.isPersistable()).isTrue();
 
         f.reset();
 
-        Assert.assertEquals(false, i.hasChanged());
-        Assert.assertEquals(false, f.hasChanged());
-        Assert.assertEquals(false, f.isPersistable());
+        then(i.hasChanged()).isFalse();
+        then(f.hasChanged()).isFalse();
+        then(f.isPersistable()).isFalse();
 
         i.userInputProperty().setValue("50");
         f.persist();
 
-        Assert.assertEquals(false, i.hasChanged());
-        Assert.assertEquals(false, f.hasChanged());
-        Assert.assertEquals(false, f.isPersistable());
+        then(i.hasChanged()).isFalse();
+        then(f.hasChanged()).isFalse();
+        then(f.isPersistable()).isFalse();
     }
 
 }
