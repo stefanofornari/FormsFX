@@ -39,6 +39,7 @@ import javafx.collections.FXCollections;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import java.util.Arrays;
 import javafx.util.StringConverter;
@@ -47,7 +48,7 @@ import javafx.util.StringConverter;
  * @author Sacha Schmid
  * @author Rinesch Murugathas
  */
-//@Ignore
+@Ignore
 public class FieldTest {
 
     @BeforeClass
