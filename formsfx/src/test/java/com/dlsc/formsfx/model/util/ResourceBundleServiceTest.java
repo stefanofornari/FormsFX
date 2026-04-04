@@ -20,14 +20,14 @@ package com.dlsc.formsfx.model.util;
  * =========================LICENSE_END==================================
  */
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import static junit.framework.TestCase.fail;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.catchThrowable;
 
 /**
  * @author Sacha Schmid
@@ -41,12 +41,10 @@ public class ResourceBundleServiceTest {
     @Test
     public void translateTest() {
         ResourceBundleService rbs = new ResourceBundleService(rbEN);
-        Assert.assertEquals("Test Form", rbs.translate("form_title"));
+        then(rbs.translate("form_title")).isEqualTo("Test Form");
 
-        try {
-            rbs.translate("non_existing");
-            fail();
-        } catch (MissingResourceException ignored) {}
+        Throwable thrown = catchThrowable(() -> rbs.translate("non_existing"));
+        then(thrown).isInstanceOf(MissingResourceException.class);
     }
 
     @Test
@@ -59,10 +57,10 @@ public class ResourceBundleServiceTest {
         rbs.addListener(r);
 
         rbs.changeLocale(rbDE);
-        Assert.assertEquals(1, calls[0]);
+        then(calls[0]).isEqualTo(1);
 
         rbs.changeLocale(rbDE);
-        Assert.assertEquals(1, calls[0]);
+        then(calls[0]).isEqualTo(1);
 
         rbs.removeListener(r);
     }

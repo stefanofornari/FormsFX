@@ -27,6 +27,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -72,6 +73,10 @@ public class SimpleTextControl extends SimpleControl<StringField, StackPane> {
   public void initializeParts() {
     super.initializeParts();
 
+    setPickOnBounds(true);
+    Tooltip.install(this, tooltip);
+    System.out.println("Hello world!");
+
     node = new StackPane();
     node.getStyleClass().add("simple-text-control");
 
@@ -82,9 +87,9 @@ public class SimpleTextControl extends SimpleControl<StringField, StackPane> {
     fieldLabel = new Label(field.labelProperty().getValue());
     editableField.setPromptText(field.placeholderProperty().getValue());
 
-    readOnlyLabel.setTooltip(tooltip);
-    editableField.setTooltip(tooltip);
-    editableArea.setTooltip(tooltip);
+    //readOnlyLabel.setTooltip(tooltip);
+    //editableField.setTooltip(tooltip);
+    //editableArea.setTooltip(tooltip);
   }
 
   /**

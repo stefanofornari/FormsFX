@@ -125,6 +125,9 @@ public abstract class SimpleControl<F extends Field, N extends Node>
     tooltip.setOnShowing(event -> {
         tooltipText();
     });
+    
+    // Install tooltip on the control itself for proper JavaFX tooltip behavior
+    Tooltip.install(this, tooltip);
   }
 
   protected void updatePseudoStyles() {
@@ -282,12 +285,8 @@ public abstract class SimpleControl<F extends Field, N extends Node>
 
   @Override
   public void setupEventHandlers() {
-    if (node != null) {
-      node.setOnMouseEntered(event -> toggleTooltip(node));
-    }
-    if (fieldLabel != null) {
-      fieldLabel.setOnMouseExited(event -> toggleTooltip(fieldLabel));
-    }
+    // No need for manual mouse event handlers since we use Tooltip.install()
+    // which handles tooltip display automatically via JavaFX's built-in mechanism
   }
 
   /**

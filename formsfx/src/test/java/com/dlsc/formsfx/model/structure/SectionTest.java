@@ -20,8 +20,9 @@ package com.dlsc.formsfx.model.structure;
  * =========================LICENSE_END==================================
  */
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Sacha Schmid
@@ -40,8 +41,8 @@ public class SectionTest {
         s.collapse(true);
         s.collapse(false);
 
-        Assert.assertEquals(2, changes[0]);
-        Assert.assertFalse(s.isCollapsed());
+        then(changes[0]).isEqualTo(2);
+        then(s.isCollapsed()).isFalse();
     }
 
 }

@@ -9,9 +9,9 @@ package com.dlsc.formsfx.model.validators;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *        http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,10 +20,10 @@ package com.dlsc.formsfx.model.validators;
  * =========================LICENSE_END==================================
  */
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.TestCase.fail;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 /**
  * @author Sacha Schmid
@@ -35,53 +35,47 @@ public class IntegerRangeValidatorTest {
     public void betweenTest() {
         IntegerRangeValidator i = IntegerRangeValidator.between(10, 20, "test");
 
-        Assert.assertTrue(i.validate(14).getResult());
-        Assert.assertFalse(i.validate(21).getResult());
-        Assert.assertTrue(i.validate(20).getResult());
-        Assert.assertTrue(i.validate(10).getResult());
+        then(i.validate(14).getResult()).isTrue();
+        then(i.validate(21).getResult()).isFalse();
+        then(i.validate(20).getResult()).isTrue();
+        then(i.validate(10).getResult()).isTrue();
 
-        try {
-            IntegerRangeValidator i2 = IntegerRangeValidator.between(20, 10, "test");
-            fail();
-        } catch (IllegalArgumentException ignored) {}
+        thenThrownBy(() -> IntegerRangeValidator.between(20, 10, "test"))
+            .isInstanceOf(IllegalArgumentException.class);
 
-        try {
-            IntegerRangeValidator i2 = IntegerRangeValidator.between(10, 10, "test");
-        } catch (IllegalArgumentException ignored) {
-            fail();
-        }
+        IntegerRangeValidator i2 = IntegerRangeValidator.between(10, 10, "test");
     }
 
     @Test
     public void atLeastTest() {
         IntegerRangeValidator i = IntegerRangeValidator.atLeast(10, "test");
 
-        Assert.assertTrue(i.validate(14).getResult());
-        Assert.assertFalse(i.validate(-139).getResult());
-        Assert.assertTrue(i.validate(10).getResult());
-        Assert.assertFalse(i.validate(9).getResult());
-        Assert.assertTrue(i.validate(Integer.MAX_VALUE).getResult());
+        then(i.validate(14).getResult()).isTrue();
+        then(i.validate(-139).getResult()).isFalse();
+        then(i.validate(10).getResult()).isTrue();
+        then(i.validate(9).getResult()).isFalse();
+        then(i.validate(Integer.MAX_VALUE).getResult()).isTrue();
     }
 
     @Test
     public void upToTest() {
         IntegerRangeValidator i = IntegerRangeValidator.upTo(10, "test");
 
-        Assert.assertFalse(i.validate(14).getResult());
-        Assert.assertFalse(i.validate(21).getResult());
-        Assert.assertTrue(i.validate(10).getResult());
-        Assert.assertFalse(i.validate(11).getResult());
-        Assert.assertTrue(i.validate(Integer.MIN_VALUE).getResult());
+        then(i.validate(14).getResult()).isFalse();
+        then(i.validate(21).getResult()).isFalse();
+        then(i.validate(10).getResult()).isTrue();
+        then(i.validate(11).getResult()).isFalse();
+        then(i.validate(Integer.MIN_VALUE).getResult()).isTrue();
     }
 
     @Test
     public void exactlyTest() {
         IntegerRangeValidator i = IntegerRangeValidator.exactly(10, "test");
 
-        Assert.assertFalse(i.validate(11).getResult());
-        Assert.assertFalse(i.validate(9).getResult());
-        Assert.assertTrue(i.validate(10).getResult());
-        Assert.assertFalse(i.validate(Integer.MIN_VALUE).getResult());
+        then(i.validate(11).getResult()).isFalse();
+        then(i.validate(9).getResult()).isFalse();
+        then(i.validate(10).getResult()).isTrue();
+        then(i.validate(Integer.MIN_VALUE).getResult()).isFalse();
     }
 
 }
